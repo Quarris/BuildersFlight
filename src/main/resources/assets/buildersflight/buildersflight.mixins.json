@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "compatibilityLevel": "JAVA_8",
+    "package": "dev.quarris.buildersflight.mixin",
+    "refmap": "buildersflight.refmap.json",
+    "mixins": [
+    ],
+    "client": [
+        "ClientPlayerEntityMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
