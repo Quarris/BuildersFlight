@@ -18,6 +18,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 
+    private static final double JUMP_STRENGTH = 0.2;
+    private static final double JUMP_THRESHOLD = 0.06;
+    private static final double DESCEND_SPEED = 0.08;
+    private static final double DESCEND_FRICTION = 0.6;
+    private static final double ASCEND_FRICTION = 0.9;
+
     @Shadow
     public MovementInput movementInput;
 
@@ -55,17 +61,17 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
 
         if (this.isFlying) {
-            if (this.movementInput.jump && Math.abs(this.getMotion().y) < 0.06) {
-                this.setMotion(this.getMotion().add(0, 0.2, 0));
+            if (this.movementInput.jump && Math.abs(this.getMotion().y) < JUMP_THRESHOLD) {
+                this.setMotion(this.getMotion().add(0, JUMP_STRENGTH, 0));
             }
             if (this.movementInput.sneaking) {
-                this.setMotion(this.getMotion().add(0, -0.07, 0));
+                this.setMotion(this.getMotion().add(0, -DESCEND_SPEED, 0));
                 this.movementInput.sneaking = false;
             }
             if (this.getMotion().y < 0) {
-                this.setMotion(this.getMotion().mul(1, 0.6, 1));
+                this.setMotion(this.getMotion().mul(1, DESCEND_FRICTION, 1));
             } else {
-                this.setMotion(this.getMotion().mul(1, 0.9, 1));
+                this.setMotion(this.getMotion().mul(1, ASCEND_FRICTION, 1));
             }
         }
     }
