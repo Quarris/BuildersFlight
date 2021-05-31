@@ -22,7 +22,7 @@ public class BuildersFlight {
 
     public static final String ID = "buildersflight";
     private static final Logger LOGGER = LogManager.getLogger();
-    public static final boolean isDemo = true;
+    public static final boolean isDemo = false;
 
     public BuildersFlight() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);

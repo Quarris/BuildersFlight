@@ -83,5 +83,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     private void setFlying(boolean isFlying) {
         this.isFlying = isFlying;
         this.setNoGravity(isFlying);
+        this.getPersistentData().putBoolean("flight", isFlying);
     }
 }
