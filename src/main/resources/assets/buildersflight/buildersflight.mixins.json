@@ -7,8 +7,10 @@
     "mixins": [
     ],
     "client": [
+        "GameRendererMixin",
         "ClientPlayerEntityMixin",
-        "PlayerModelMixin"
+        "PlayerModelMixin",
+        "PlayerRendererMixin"
     ],
     "injectors": {
         "defaultRequire": 1

@@ -13,14 +13,6 @@ public class FlightEffect extends Effect {
     }
 
     @Override
-    public void applyAttributesModifiersToEntity(LivingEntity entity, AttributeModifierManager attributeMapIn, int amplifier) {
-        super.applyAttributesModifiersToEntity(entity, attributeMapIn, amplifier);
-        if (entity instanceof PlayerEntity) {
-            entity.setNoGravity(true);
-        }
-    }
-
-    @Override
     public void removeAttributesModifiersFromEntity(LivingEntity entity, AttributeModifierManager attributeMapIn, int amplifier) {
         super.removeAttributesModifiersFromEntity(entity, attributeMapIn, amplifier);
         if (entity instanceof PlayerEntity) {
