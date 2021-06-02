@@ -1,7 +1,7 @@
 package dev.quarris.buildersflight.mixin;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import dev.quarris.buildersflight.content.IFlighter;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
@@ -18,10 +18,7 @@ public class PlayerRendererMixin<T extends LivingEntity, M extends EntityModel<T
             target = "Lcom/mojang/blaze3d/matrix/MatrixStack;push()V",
             shift = At.Shift.AFTER))
     public void renderBobbing(T entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, CallbackInfo ci) {
-        if (!(entityIn.getPersistentData().contains("flight") && entityIn.getPersistentData().getBoolean("flight")))
-            return;
-
-        if (Math.abs(entityIn.getMotion().y) > 0.03)
+        if (!(entityIn instanceof IFlighter) || !((IFlighter) entityIn).isFlying())
             return;
 
         matrixStackIn.translate(0, 1/16f * Math.sin(Math.toRadians(entityIn.ticksExisted) * 5), 0);

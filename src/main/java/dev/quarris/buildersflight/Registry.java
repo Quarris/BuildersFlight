@@ -24,10 +24,10 @@ public class Registry {
     public static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(ForgeRegistries.POTION_TYPES, BuildersFlight.ID);
 
     public static final RegistryObject<Effect> FLIGHT = EFFECTS.register("flight", () -> new FlightEffect(EffectType.BENEFICIAL, 0xffa761e8));
-    public static final RegistryObject<Potion> LEVITATION_POTION = potion("levitation", "levitation", Effects.LEVITATION, 0, 180 * 20);
-    public static final RegistryObject<Potion> LONG_LEVITATION_POTION = potion("long_levitation", "levitation", Effects.LEVITATION, 0, 540 * 20);
-    public static final RegistryObject<Potion> FLIGHT_POTION = potion("flight", "flight", FLIGHT::get, 0, 90 * 20);
-    public static final RegistryObject<Potion> LONG_FLIGHT_POTION = potion("long_flight", "flight", FLIGHT::get, 0, 180 * 20);
+    public static final RegistryObject<Potion> LEVITATION_POTION = potion("levitation", "levitation", Effects.LEVITATION, 0, 90 * 20);
+    public static final RegistryObject<Potion> LONG_LEVITATION_POTION = potion("long_levitation", "levitation", Effects.LEVITATION, 0, 180 * 20);
+    public static final RegistryObject<Potion> FLIGHT_POTION = potion("flight", "flight", FLIGHT::get, 0, 180 * 20);
+    public static final RegistryObject<Potion> LONG_FLIGHT_POTION = potion("long_flight", "flight", FLIGHT::get, 0, 540 * 20);
 
     public static final RegistryObject<Item> SHULKER_HEART_ITEM = item("shulker_heart", () -> new Item(new Item.Properties().group(ItemGroup.BREWING)));
 

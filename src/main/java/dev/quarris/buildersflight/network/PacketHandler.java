@@ -20,11 +20,15 @@ public class PacketHandler {
 
     public static void init() {
         CHANNEL.registerMessage(0, FlightStatePacket.class, FlightStatePacket::encode, FlightStatePacket::decode, FlightStatePacket::handle);
-        CHANNEL.registerMessage(1, FlightStatePacket.class, FlightStatePacket::encode, FlightStatePacket::decode, FlightStatePacket::handle);
+        CHANNEL.registerMessage(1, FlightTargetRotationPacket.class, FlightTargetRotationPacket::encode, FlightTargetRotationPacket::decode, FlightTargetRotationPacket::handle);
     }
 
     public static void sendTo(Object packet, ServerPlayerEntity player) {
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), packet);
+    }
+
+    public static void sendToAllAround(Object packet, ServerPlayerEntity player, double distance) {
+        CHANNEL.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(player.getPosX(), player.getPosY(), player.getPosZ(), distance, player.getServerWorld().getDimensionKey())), packet);
     }
 
     public static void sendToServer(Object packet) {

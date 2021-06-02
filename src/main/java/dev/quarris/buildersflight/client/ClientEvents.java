@@ -21,18 +21,7 @@ public class ClientEvents {
     private static long startTime = System.currentTimeMillis();
     private static boolean demoEnded = false;
 
-    @SubscribeEvent
-    public static void cancelMovementInput(InputUpdateEvent event) {
-        EffectInstance effect = event.getPlayer().getActivePotionEffect(Registry.FLIGHT.get());
-        if (effect != null) {
-            if (event.getMovementInput().jump) {
-                //PacketHandler.sendToServer(new FlightActionPacket(FlightActionPacket.Action.ASCEND, 0.15));
-            }
-            if (event.getMovementInput().sneaking) {
-                //PacketHandler.sendToServer(new FlightActionPacket(FlightActionPacket.Action.DESCEND, 0.01));
-            }
-        }
-    }
+
 
     @SubscribeEvent
     public static void demo(TickEvent.ClientTickEvent event) {
@@ -60,7 +49,6 @@ public class ClientEvents {
                 public boolean shouldCloseOnEsc() {
                     return false;
                 }
-
             });
         }
     }

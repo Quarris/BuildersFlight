@@ -1,6 +1,7 @@
 package dev.quarris.buildersflight.mixin;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import dev.quarris.buildersflight.content.IFlighter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.settings.PointOfView;
@@ -30,11 +31,12 @@ public class GameRendererMixin {
         if (!(this.mc.getRenderViewEntity() instanceof PlayerEntity))
             return;
 
-        PlayerEntity playerentity = (PlayerEntity) this.mc.getRenderViewEntity();
-        if (!(playerentity.getPersistentData().contains("flight") && playerentity.getPersistentData().getBoolean("flight")))
+        PlayerEntity player = (PlayerEntity) this.mc.getRenderViewEntity();
+
+        if (!(player instanceof IFlighter) || !((IFlighter) player).isFlying())
             return;
 
-        float f1 = (float) Math.toRadians(playerentity.ticksExisted);
+        float f1 = (float) Math.toRadians(player.ticksExisted);
         float f2 = 1/16f;
         matrixStackIn.translate(MathHelper.sin(f1 * (float) Math.PI) * f2 * 0.2F, MathHelper.cos(f1 * (float) Math.PI) * f2, 0.0D);
     }

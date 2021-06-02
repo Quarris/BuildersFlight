@@ -1,7 +1,6 @@
 package dev.quarris.buildersflight.mixin;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import dev.quarris.buildersflight.content.IFlighter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.AgeableModel;
 import net.minecraft.client.renderer.entity.model.BipedModel;
@@ -9,9 +8,7 @@ import net.minecraft.client.renderer.entity.model.IHasArm;
 import net.minecraft.client.renderer.entity.model.IHasHead;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BipedModel.class)
-public abstract class PlayerModelMixin<T extends LivingEntity> extends AgeableModel<T> implements IHasArm, IHasHead {
+public abstract class BipedModelMixin<T extends LivingEntity> extends AgeableModel<T> implements IHasArm, IHasHead {
 
     @Shadow
     public ModelRenderer bipedHead;
@@ -36,12 +33,11 @@ public abstract class PlayerModelMixin<T extends LivingEntity> extends AgeableMo
     @Shadow
     public ModelRenderer bipedBody;
 
-    private float targetArmRotation;
-    private float prevArmRotation;
-    private float currentArmRotation;
-    private float targetLegRotation;
-    private float prevLegRotation;
-    private float currentLegRotation;
+    @Shadow
+    public BipedModel.ArmPose leftArmPose;
+
+    @Shadow
+    public BipedModel.ArmPose rightArmPose;
 
     @Inject(method = "setRotationAngles", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getPrimaryHand()Lnet/minecraft/util/HandSide;"))
     public void setFlightRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci) {
@@ -50,60 +46,40 @@ public abstract class PlayerModelMixin<T extends LivingEntity> extends AgeableMo
         if (ageInTicks == 0)
             return;
 
-        if (!(entityIn.getPersistentData().contains("flight") && entityIn.getPersistentData().getBoolean("flight"))) {
-            this.prevArmRotation = 0;
-            this.currentArmRotation = 0;
-            this.prevLegRotation = 0;
-            this.currentLegRotation = 0;
+        if (!(entityIn instanceof IFlighter))
             return;
-        }
+
+        IFlighter flighter = (IFlighter) entityIn;
+
+        if (!flighter.isFlying())
+            return;
+
         resetAngles();
-        float partialTicks = Minecraft.getInstance().getRenderPartialTicks();
-        Vector3d motion = entityIn.getMotion();
-
-        double horMotion = motion.x * motion.z;
-
-        // -0.11 - 0.21
-
-        this.targetArmRotation = 70;
-        this.targetLegRotation = 5;
-
-        if (motion.y < -0.05) {
-            this.targetArmRotation = 160;
-        } else if (motion.y > 0.09) {
-            this.targetArmRotation = 0;
-            this.targetLegRotation = 0;
-        } else {
-            this.bipedRightArm.rotateAngleX = -(float) Math.toRadians(15);
-            this.bipedLeftArm.rotateAngleX = -(float) Math.toRadians(15);
+        float partial = Minecraft.getInstance().getRenderPartialTicks();
+        if (!(this.leftArmPose.func_241657_a_() || this.rightArmPose.func_241657_a_())) {
+            float armRads = (float) Math.toRadians(flighter.getLerpedArmRotation(partial));
+            switch (this.rightArmPose) {
+                case EMPTY:
+                case ITEM:
+                case BLOCK:
+                    this.bipedRightArm.rotateAngleX = -(float) Math.toRadians(15);
+                    this.bipedRightArm.rotateAngleZ = armRads;
+                    animateIdleModel(this.bipedRightArm, this.bipedLeftArm, ageInTicks, 0.06F, 0.06F, 2f);
+            }
+            switch (this.leftArmPose) {
+                case EMPTY:
+                case ITEM:
+                case BLOCK:
+                    this.bipedLeftArm.rotateAngleX = -(float) Math.toRadians(15);
+                    this.bipedLeftArm.rotateAngleZ = -armRads;
+                    animateIdleModel(this.bipedRightLeg, this.bipedLeftLeg, ageInTicks, 0.1F, 0.07F, 0.9f);
+            }
         }
 
-        this.prevLegRotation = this.currentLegRotation;
-        this.prevArmRotation = this.currentArmRotation;
-
-        this.currentArmRotation = MathHelper.approach(this.currentArmRotation, this.targetArmRotation, (this.targetArmRotation - this.currentArmRotation) / 10);
-        this.currentLegRotation = MathHelper.approach(this.currentLegRotation, this.targetLegRotation, (this.targetLegRotation - this.currentLegRotation) / 10);
-
-        float lerpedArmRot = MathHelper.lerp(partialTicks, this.prevArmRotation, this.currentArmRotation);
-        float lerpedLegRot = MathHelper.lerp(partialTicks, this.prevLegRotation, this.currentLegRotation);
-
-        float armRads = (float) Math.toRadians(lerpedArmRot);
-        this.bipedRightArm.rotateAngleZ = armRads;
-        this.bipedLeftArm.rotateAngleZ = -armRads;
-
-        float legRads = (float) Math.toRadians(lerpedLegRot);
+        float legRads = (float) Math.toRadians(flighter.getLerpedLegRotation(partial));
         this.bipedRightLeg.rotateAngleZ = legRads;
         this.bipedLeftLeg.rotateAngleZ = -legRads;
-        if (Math.abs(horMotion) < 0.00001) {
-            //model.bipedBody.rotationPointZ = 0;
-        } else {
-            //model.bipedBody.rotationPointZ = horMotion > 0 ? -3 : 3;
-        }
 
-        animateIdleModel(this.bipedRightArm, this.bipedLeftArm, ageInTicks, 0.06F, 0.06F, 2f);
-        animateIdleModel(this.bipedRightLeg, this.bipedLeftLeg, ageInTicks, 0.1F, 0.07F, 0.9f);
-        if ((motion.y > -0.05) && (motion.y < 0.09)) {
-        }
     }
 
     // Passively swings the models

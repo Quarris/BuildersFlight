@@ -5,13 +5,9 @@
     "package": "dev.quarris.buildersflight.mixin",
     "refmap": "buildersflight.refmap.json",
     "mixins": [
+        "PlayerEntityMixin"
     ],
-    "client": [
-        "GameRendererMixin",
-        "ClientPlayerEntityMixin",
-        "PlayerModelMixin",
-        "PlayerRendererMixin"
-    ],
+    "client": ["BipedModelMixin", "ClientPlayerEntityMixin", "GameRendererMixin", "PlayerRendererMixin", "RemoteClientPlayerEntityMixin"],
     "injectors": {
         "defaultRequire": 1
     }
