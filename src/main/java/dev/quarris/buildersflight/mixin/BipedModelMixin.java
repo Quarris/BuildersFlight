@@ -56,12 +56,16 @@ public abstract class BipedModelMixin<T extends LivingEntity> extends AgeableMod
 
         resetAngles();
         float partial = Minecraft.getInstance().getRenderPartialTicks();
+
+        float legRads = (float) Math.toRadians(flighter.getLerpedLegRotation(partial));
+        this.bipedRightLeg.rotateAngleZ = legRads;
+        this.bipedLeftLeg.rotateAngleZ = -legRads;
+
         if (!(this.leftArmPose.func_241657_a_() || this.rightArmPose.func_241657_a_())) {
             float armRads = (float) Math.toRadians(flighter.getLerpedArmRotation(partial));
             switch (this.rightArmPose) {
                 case EMPTY:
                 case ITEM:
-                case BLOCK:
                     this.bipedRightArm.rotateAngleX = -(float) Math.toRadians(15);
                     this.bipedRightArm.rotateAngleZ = armRads;
                     animateIdleModel(this.bipedRightArm, this.bipedLeftArm, ageInTicks, 0.06F, 0.06F, 2f);
@@ -69,16 +73,12 @@ public abstract class BipedModelMixin<T extends LivingEntity> extends AgeableMod
             switch (this.leftArmPose) {
                 case EMPTY:
                 case ITEM:
-                case BLOCK:
                     this.bipedLeftArm.rotateAngleX = -(float) Math.toRadians(15);
                     this.bipedLeftArm.rotateAngleZ = -armRads;
                     animateIdleModel(this.bipedRightLeg, this.bipedLeftLeg, ageInTicks, 0.1F, 0.07F, 0.9f);
             }
         }
 
-        float legRads = (float) Math.toRadians(flighter.getLerpedLegRotation(partial));
-        this.bipedRightLeg.rotateAngleZ = legRads;
-        this.bipedLeftLeg.rotateAngleZ = -legRads;
 
     }
 
