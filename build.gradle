@@ -22,7 +22,7 @@ mixin {
     add sourceSets.main, "buildersflight.refmap.json"
 }
 
-version = '0.6'
+version = '1.0'
 group = 'dev.quarris.buildersflight' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'BuildersFlight'
 
