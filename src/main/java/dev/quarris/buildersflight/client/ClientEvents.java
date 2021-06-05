@@ -21,11 +21,9 @@ public class ClientEvents {
     private static long startTime = System.currentTimeMillis();
     private static boolean demoEnded = false;
 
-
-
     @SubscribeEvent
     public static void demo(TickEvent.ClientTickEvent event) {
-        if (BuildersFlight.isDemo && System.currentTimeMillis() - startTime > 30 * 60 * 1000 && !demoEnded) {
+        if (BuildersFlight.isDemo && System.currentTimeMillis() - startTime > 15 * 60 * 1000 && !demoEnded) {
             demoEnded = true;
             Minecraft.getInstance().displayGuiScreen(new Screen(new StringTextComponent("Demo Ended")) {
                 boolean firstUpd = true;

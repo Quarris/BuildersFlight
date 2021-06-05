@@ -1,4 +1,5 @@
 {
+    "__comment": "This loot table is not being used. Its only here in case I want to bring it back.",
     "type": "minecraft:entity",
     "pools": [
         {
@@ -7,6 +8,13 @@
                 {
                     "type": "minecraft:item",
                     "name": "buildersflight:shulker_heart"
+                }
+            ],
+            "conditions": [
+                {
+                    "condition": "minecraft:random_chance_with_looting",
+                    "chance": 0.5,
+                    "looting_multiplier": 0.0625
                 }
             ]
         }
